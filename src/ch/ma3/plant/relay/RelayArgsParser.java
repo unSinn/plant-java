@@ -1,4 +1,4 @@
-package ch.ma3.ch.plant.relay;
+package ch.ma3.plant.relay;
 
 import com.phidgets.PhidgetException;
 
