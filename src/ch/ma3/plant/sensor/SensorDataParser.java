@@ -1,4 +1,4 @@
-package sensor;
+package ch.ma3.plant.sensor;
 
 import java.util.Map;
 

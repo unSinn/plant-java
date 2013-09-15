@@ -1,10 +1,11 @@
 package ch.ma3.plant;
 
-import sensor.SerialConnector;
 import it.sauronsoftware.cron4j.Scheduler;
 import ch.ma3.plant.relay.Relay;
 import ch.ma3.plant.relay.RelayArgsParser;
 import ch.ma3.plant.relay.RelayCronJob;
+import ch.ma3.plant.sensor.DeviceController;
+import ch.ma3.plant.sensor.SerialConnector;
 
 import com.phidgets.PhidgetException;
 
@@ -17,8 +18,9 @@ public class Main {
 		try {
 
 			SerialConnector serial = new SerialConnector();
-
+			setupArduino(serial);
 			setupRelay(args);
+
 			System.out.println("Started.");
 			while (running) {
 				// run forever
@@ -30,6 +32,10 @@ public class Main {
 			e.printStackTrace();
 		}
 
+	}
+
+	private static void setupArduino(SerialConnector serial) {
+		DeviceController controller = new DeviceController(serial);
 	}
 
 	private static void setupRelay(String[] args) throws PhidgetException {

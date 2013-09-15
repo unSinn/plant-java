@@ -1,5 +1,6 @@
-package sensor;
+package ch.ma3.plant.sensor;
 
+import ch.ma3.plant.sensor.devices.Device;
 import jssc.SerialPort;
 import jssc.SerialPortEvent;
 import jssc.SerialPortEventListener;
@@ -8,7 +9,7 @@ import jssc.SerialPortException;
 public class SerialConnector {
 
 	private SerialPort serialPort;
-	SensorDataParser parser;
+	private SensorDataParser parser;
 
 	public SerialConnector() {
 
@@ -25,6 +26,17 @@ public class SerialConnector {
 			System.out.println("Port " + serialPort.getPortName() + " open!");
 		} catch (SerialPortException ex) {
 			System.out.println(ex);
+		}
+	}
+
+	public void sendString(Device device, byte value) {
+		try {
+			System.out.println("Sending: " + device.getChar() + value);
+			serialPort.writeBytes(device.getChar().getBytes());
+			serialPort.writeByte(value);
+		} catch (SerialPortException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 
