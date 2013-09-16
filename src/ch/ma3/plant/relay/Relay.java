@@ -1,5 +1,9 @@
 package ch.ma3.plant.relay;
 
+import java.text.DateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 import com.phidgets.InterfaceKitPhidget;
 import com.phidgets.Phidget;
 import com.phidgets.PhidgetException;
@@ -13,11 +17,13 @@ import com.phidgets.event.ErrorListener;
 public class Relay {
 	private InterfaceKitPhidget ik;
 	private boolean[] switchState;
+	private DateFormat df = DateFormat.getDateInstance(DateFormat.LONG,
+			Locale.GERMAN);
 
 	public Relay() throws PhidgetException {
 		switchState = new boolean[4];
 
-		//Phidget.enableLogging(Phidget.PHIDGET_LOG_ERROR, "");
+		// Phidget.enableLogging(Phidget.PHIDGET_LOG_ERROR, "");
 
 		ik = new InterfaceKitPhidget();
 
@@ -51,9 +57,11 @@ public class Relay {
 
 	}
 
-	public void setSwitch(int nr, boolean value) throws PhidgetException {
-		switchState[nr] = value;
-		ik.setOutputState(nr, value);
+	public void setSwitch(int pin, boolean onOff) throws PhidgetException {
+		System.out.println(df.format(new Date(System.currentTimeMillis()))
+				+ " Turning switch " + pin + " to " + onOff);
+		switchState[pin] = onOff;
+		ik.setOutputState(pin, onOff);
 	}
 
 	private void restoreSwitchStates() throws PhidgetException {

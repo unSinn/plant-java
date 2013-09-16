@@ -42,7 +42,6 @@ public class RelayCronJob implements Runnable {
 	public void run() {
 		try {
 			relay.setSwitch(pin, onOff);
-			System.out.println("Turning switch " + pin + " to " + onOff);
 		} catch (PhidgetException e) {
 			System.out.println(e.getDescription()
 					+ "Phidget Error: Cannot set relay value."

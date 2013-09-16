@@ -46,9 +46,9 @@ public class Main {
 
 	private static void setupCron(Relay relay) {
 		Scheduler s = new Scheduler();
-		RelayCronJob.forRelay(relay).pin(1).turnOn().at("0 10 * * *")
+		RelayCronJob.forRelay(relay).pin(0).turnOn().at("00 10 * * *")
 				.schedule(s);
-		RelayCronJob.forRelay(relay).pin(1).turnOff().at("0 22 * * *")
+		RelayCronJob.forRelay(relay).pin(0).turnOff().at("00 22 * * *")
 				.schedule(s);
 		s.start();
 	}

@@ -4,7 +4,7 @@ import ch.ma3.plant.sensor.DeviceController;
 
 public class Servo implements Device, Runnable {
 
-	private boolean running = true;
+	private boolean running = false;
 	private DeviceController controller;
 
 	public Servo(DeviceController controller) {
