@@ -1,9 +1,13 @@
 package ch.ma3.plant.sensor.devices;
 
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
+
 import ch.ma3.plant.sensor.DeviceController;
 
 public class Servo implements Device, Runnable {
 
+	private static Logger log = LogManager.getLogger(Servo.class);
 	private boolean running = false;
 	private DeviceController controller;
 
@@ -23,8 +27,7 @@ public class Servo implements Device, Runnable {
 				controller.sendValue(this, i);
 				Thread.sleep(500);
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				log.error(e);
 			}
 		}
 

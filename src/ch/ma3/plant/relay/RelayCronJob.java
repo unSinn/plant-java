@@ -2,8 +2,6 @@ package ch.ma3.plant.relay;
 
 import it.sauronsoftware.cron4j.Scheduler;
 
-import com.phidgets.PhidgetException;
-
 public class RelayCronJob implements Runnable {
 
 	private String cronString;
@@ -40,14 +38,7 @@ public class RelayCronJob implements Runnable {
 	}
 
 	public void run() {
-		try {
-			relay.setSwitch(pin, onOff);
-		} catch (PhidgetException e) {
-			System.out.println(e.getDescription()
-					+ "Phidget Error: Cannot set relay value."
-					+ e.getErrorNumber());
-			e.printStackTrace();
-		}
+		relay.setSwitch(pin, onOff);
 	}
 
 	public void schedule(Scheduler scheduler) {

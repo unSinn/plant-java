@@ -1,13 +1,18 @@
 package ch.ma3.plant.sensor;
 
-import ch.ma3.plant.sensor.devices.Device;
 import jssc.SerialPort;
 import jssc.SerialPortEvent;
 import jssc.SerialPortEventListener;
 import jssc.SerialPortException;
 
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
+
+import ch.ma3.plant.sensor.devices.Device;
+
 public class SerialConnector {
 
+	private static Logger log = LogManager.getLogger(SerialConnector.class);
 	private SerialPort serialPort;
 	private SensorDataParser parser;
 
@@ -23,20 +28,19 @@ public class SerialConnector {
 			int mask = SerialPort.MASK_RXCHAR;
 			serialPort.setEventsMask(mask);
 			serialPort.addEventListener(new MySerialPortEventListener());
-			System.out.println("Port " + serialPort.getPortName() + " open!");
+			log.info("Port " + serialPort.getPortName() + " open!");
 		} catch (SerialPortException ex) {
-			System.out.println(ex);
+			log.error(ex);
 		}
 	}
 
 	public void sendString(Device device, byte value) {
 		try {
-			System.out.println("Sending: " + device.getChar() + value);
+			log.info("Sending: " + device.getChar() + value);
 			serialPort.writeBytes(device.getChar().getBytes());
 			serialPort.writeByte(value);
 		} catch (SerialPortException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error(e);
 		}
 	}
 
@@ -53,7 +57,6 @@ public class SerialConnector {
 						String line;
 						line = list[0];
 						if (line != null && line.startsWith("{")) {
-							System.out.println(line);
 							parser.parse(line);
 						}
 						String residue = "";
@@ -63,10 +66,17 @@ public class SerialConnector {
 						buffer = residue;
 					}
 				} catch (SerialPortException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					log.error(e.getStackTrace());
 				}
 			}
+		}
+	}
+
+	public void close() {
+		try {
+			serialPort.closePort();
+		} catch (SerialPortException e) {
+			log.error(e.getStackTrace());
 		}
 	}
 }
