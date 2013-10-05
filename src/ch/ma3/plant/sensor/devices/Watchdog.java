@@ -28,7 +28,7 @@ public class Watchdog implements Device, Runnable {
 				dt = DateTime.now();
 				controller.sendValue(this, (byte) dt.getHourOfDay(),
 						(byte) dt.getMinuteOfHour());
-				Thread.sleep(5000);
+				Thread.sleep(60000);
 			} catch (InterruptedException e) {
 				log.error(e);
 			}

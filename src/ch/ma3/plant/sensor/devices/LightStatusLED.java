@@ -31,7 +31,7 @@ public class LightStatusLED implements Runnable, Device{
 				else{
 					controller.sendValue(this, (byte)0);
 				}
-				Thread.sleep(30000);
+				Thread.sleep(60000);
 			} catch (InterruptedException e) {
 				log.error(e);
 			}

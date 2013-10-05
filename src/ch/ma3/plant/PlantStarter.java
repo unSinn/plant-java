@@ -57,9 +57,9 @@ public class PlantStarter {
 	}
 
 	private void setupCron(Relay relay) {
-		RelayCronJob.forRelay(relay).pin(Relay.LIGHTPIN).turnOn().at("* 22-9 * * *")
+		RelayCronJob.forRelay(relay).pin(Relay.LIGHTPIN).turnOn().at("* 10-21 * * *")
 				.schedule(scheduler);
-		RelayCronJob.forRelay(relay).pin(Relay.LIGHTPIN).turnOff().at("* 10-21 * * *") // 10:00
+		RelayCronJob.forRelay(relay).pin(Relay.LIGHTPIN).turnOff().at("* 22-9 * * *") // 10:00
 																			// -
 																			// 21:59
 				.schedule(scheduler);
