@@ -23,7 +23,7 @@ public class SerialConnector {
 
 		try {
 			serialPort.openPort();// Open serial port
-			serialPort.setParams(SerialPort.BAUDRATE_9600,
+			serialPort.setParams(SerialPort.BAUDRATE_57600,
 					SerialPort.DATABITS_8, SerialPort.STOPBITS_1,
 					SerialPort.PARITY_NONE);// Set params.
 
@@ -74,7 +74,7 @@ public class SerialConnector {
 			if (sev.getEventValue() > 0) {
 				try {
 					buffer += new String(serialPort.readBytes());
-					log.info(buffer);
+					// log.info(buffer);
 					if (buffer.contains("\n")) {
 						String[] list = buffer.split("\n");
 						String line;
