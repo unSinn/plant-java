@@ -10,8 +10,8 @@ import ch.ma3.plant.relay.RelayCronJob;
 import ch.ma3.plant.sensor.DeviceController;
 import ch.ma3.plant.sensor.SensorDataWriterCronJob;
 import ch.ma3.plant.sensor.SerialConnector;
-
-import com.phidgets.PhidgetException;
+import ch.ma3.plant.sensor.devices.LightStatusLED;
+import ch.ma3.plant.sensor.devices.Watchdog;
 
 public class PlantStarter {
 	private static Logger log = LogManager.getLogger(PlantStarter.class);
@@ -19,18 +19,30 @@ public class PlantStarter {
 	private Scheduler scheduler;
 	private SerialConnector serial;
 	private Relay relay;
+	private DeviceController controller;
 
 	public PlantStarter() {
-		scheduler = new Scheduler();
+
 	}
 
 	public void start() {
 		log.info("Starting Services up...");
 		serial = new SerialConnector();
-		setupArduino(serial);
+		scheduler = new Scheduler();
+		controller = new DeviceController(serial);
 		relay = new Relay();
 		setupCron(relay);
+		setupWatchDog();
+		setupLightStatusLED();
 		log.info("Started.");
+	}
+
+	private void setupLightStatusLED() {
+		LightStatusLED led = new LightStatusLED(controller, relay);
+	}
+
+	private void setupWatchDog() {
+		Watchdog w = new Watchdog(controller);
 	}
 
 	/**
@@ -41,19 +53,15 @@ public class PlantStarter {
 		if (serial != null) {
 			serial.close();
 		}
-
 		scheduler.stop();
-
-	}
-
-	private void setupArduino(SerialConnector serial) {
-		new DeviceController(serial);
 	}
 
 	private void setupCron(Relay relay) {
-		RelayCronJob.forRelay(relay).pin(0).turnOn().at("00 10 * * *")
+		RelayCronJob.forRelay(relay).pin(Relay.LIGHTPIN).turnOn().at("* 22-9 * * *")
 				.schedule(scheduler);
-		RelayCronJob.forRelay(relay).pin(0).turnOff().at("00 22 * * *")
+		RelayCronJob.forRelay(relay).pin(Relay.LIGHTPIN).turnOff().at("* 10-21 * * *") // 10:00
+																			// -
+																			// 21:59
 				.schedule(scheduler);
 
 		SensorDataWriterCronJob.at("*/5 * * * *").schedule(scheduler);

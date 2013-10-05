@@ -8,16 +8,15 @@ import ch.ma3.plant.sensor.DeviceController;
 public class Servo implements Device, Runnable {
 
 	private static Logger log = LogManager.getLogger(Servo.class);
-	private boolean running = false;
+	private boolean running = true;
 	private DeviceController controller;
 
 	public Servo(DeviceController controller) {
 		this.controller = controller;
 	}
 
-	public String getChar() {
-		// TODO Auto-generated method stub
-		return "S";
+	public char getChar() {
+		return 'S';
 	}
 
 	public void run() {

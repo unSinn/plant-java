@@ -23,7 +23,9 @@ public class SerialConnector {
 
 		try {
 			serialPort.openPort();// Open serial port
-			serialPort.setParams(57600, 8, 1, 0);// Set params.
+			serialPort.setParams(SerialPort.BAUDRATE_9600,
+					SerialPort.DATABITS_8, SerialPort.STOPBITS_1,
+					SerialPort.PARITY_NONE);// Set params.
 
 			int mask = SerialPort.MASK_RXCHAR;
 			serialPort.setEventsMask(mask);
@@ -37,10 +39,31 @@ public class SerialConnector {
 	public void sendString(Device device, byte value) {
 		try {
 			log.info("Sending: " + device.getChar() + value);
-			serialPort.writeBytes(device.getChar().getBytes());
-			serialPort.writeByte(value);
+			byte[] bytes = new byte[2];
+			bytes[0] = (byte) device.getChar();
+			bytes[1] = value;
+			sendBytes(bytes);
 		} catch (SerialPortException e) {
 			log.error(e);
+		}
+	}
+
+	public void sendString(Device device, byte i, byte j) {
+		try {
+			log.info("Sending: " + device.getChar() + i + j);
+			byte[] bytes = new byte[3];
+			bytes[0] = (byte) device.getChar();
+			bytes[1] = i;
+			bytes[2] = j;
+			sendBytes(bytes);
+		} catch (SerialPortException e) {
+			log.error(e);
+		}
+	}
+
+	private void sendBytes(byte[] bytes) throws SerialPortException {
+		synchronized (serialPort) {
+			serialPort.writeBytes(bytes);
 		}
 	}
 
@@ -51,7 +74,7 @@ public class SerialConnector {
 			if (sev.getEventValue() > 0) {
 				try {
 					buffer += new String(serialPort.readBytes());
-
+					log.info(buffer);
 					if (buffer.contains("\n")) {
 						String[] list = buffer.split("\n");
 						String line;

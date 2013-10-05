@@ -1,9 +1,5 @@
 package ch.ma3.plant.relay;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.util.Date;
@@ -22,6 +18,9 @@ import com.phidgets.event.ErrorEvent;
 import com.phidgets.event.ErrorListener;
 
 public class Relay implements Runnable {
+
+	public static final int LIGHTPIN = 0;
+
 	private static Logger log = LogManager.getLogger(Relay.class);
 
 	private InterfaceKitPhidget ik;
@@ -29,52 +28,33 @@ public class Relay implements Runnable {
 	private DateFormat df = DateFormat.getDateInstance(DateFormat.LONG,
 			Locale.GERMAN);
 	private Thread thread;
-	private File switchStatesFile;
-	private FileReader fr;
-	private FileWriter fw;
 
 	public Relay() {
-		switchStatesFile = new File("switchstates");
-		try {
-			fr = new FileReader(switchStatesFile);
-			fw = new FileWriter(switchStatesFile);
-		} catch (FileNotFoundException e) {
-			log.error(e);
-		} catch (IOException e) {
-			log.error(e);
-		}
-
 		thread = new Thread(this);
 		thread.start();
 	}
 
 	public void setSwitch(int pin, boolean onOff) {
 		try {
-			while (!ik.isAttached()) {
-				// wait
+			if (!ik.isAttached()) {
+				log.info("switch " + pin + " not turned " + onOff
+						+ " because no relay was attached.");
+				return;
 			}
-			log.info(df.format(new Date(System.currentTimeMillis()))
-					+ " Turning switch " + pin + " to " + onOff);
+			log.info("Turning switch " + pin + " to " + onOff);
 			switchState[pin] = onOff;
 			ik.setOutputState(pin, onOff);
 
-			saveSwitchState();
-		} catch (PhidgetException | IOException e) {
+		} catch (PhidgetException e) {
 			log.error(e);
 		}
 	}
 
-	private void saveSwitchState() throws IOException {
-		switchStatesFile.createNewFile();
-		fw.write(intFromBooleanArray(switchState));
-		fw.close();
+	public boolean getSwitchState(int pin) {
+		return switchState[pin];
 	}
 
 	private void restoreSwitchStates() throws PhidgetException, IOException {
-		booleanArrayFromByte(fr.read());
-		fr.close();
-
-		switchState[0] = true;
 		for (int i = 0; i < switchState.length; i++) {
 			log.info("Restoring switch " + i + " to " + switchState[i]);
 			ik.setOutputState(i, switchState[i]);
@@ -84,7 +64,8 @@ public class Relay implements Runnable {
 	public void run() {
 		try {
 			openPhidget();
-		} catch (PhidgetException e) {
+			Thread.sleep(1000);
+		} catch (PhidgetException | InterruptedException e) {
 			log.error(e);
 		}
 	}
@@ -124,25 +105,4 @@ public class Relay implements Runnable {
 		ik.waitForAttachment();
 	}
 
-	private boolean[] booleanArrayFromByte(int x) {
-		boolean bs[] = new boolean[4];
-		bs[0] = ((x & 0x01) != 0);
-		bs[1] = ((x & 0x02) != 0);
-		bs[2] = ((x & 0x04) != 0);
-		bs[3] = ((x & 0x08) != 0);
-		return bs;
-	}
-
-	private int intFromBooleanArray(boolean[] ba) {
-		int by = 0;
-
-		for (int i = 0; i < ba.length; i++) {
-			if (ba[i]) {
-				by++;
-			}
-			by = (by << 1);
-		}
-
-		return by;
-	}
 }
