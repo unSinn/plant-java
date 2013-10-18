@@ -1,9 +1,6 @@
 package ch.ma3.plant.relay;
 
 import java.io.IOException;
-import java.text.DateFormat;
-import java.util.Date;
-import java.util.Locale;
 
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
@@ -24,9 +21,7 @@ public class Relay implements Runnable {
 	private static Logger log = LogManager.getLogger(Relay.class);
 
 	private InterfaceKitPhidget ik;
-	private boolean[] switchState;
-	private DateFormat df = DateFormat.getDateInstance(DateFormat.LONG,
-			Locale.GERMAN);
+	private boolean[] switchState = { false, false, false, false };
 	private Thread thread;
 
 	public Relay() {
@@ -41,7 +36,9 @@ public class Relay implements Runnable {
 						+ " because no relay was attached.");
 				return;
 			}
-			log.info("Turning switch " + pin + " to " + onOff);
+			if(switchState[pin] = onOff){
+				log.info("Turning switch " + pin + " to " + onOff);
+			}
 			switchState[pin] = onOff;
 			ik.setOutputState(pin, onOff);
 
@@ -71,12 +68,7 @@ public class Relay implements Runnable {
 	}
 
 	private void openPhidget() throws PhidgetException {
-		switchState = new boolean[4];
-
-		// Phidget.enableLogging(Phidget.PHIDGET_LOG_ERROR, "");
-
 		ik = new InterfaceKitPhidget();
-
 		ik.addErrorListener(new ErrorListener() {
 			public void error(ErrorEvent ee) {
 				log.info("Phidget ErrorEvent" + ee);

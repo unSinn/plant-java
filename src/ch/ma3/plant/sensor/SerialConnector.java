@@ -38,7 +38,6 @@ public class SerialConnector {
 
 	public void sendString(Device device, byte value) {
 		try {
-			log.info("Sending: " + device.getChar() + value);
 			byte[] bytes = new byte[2];
 			bytes[0] = (byte) device.getChar();
 			bytes[1] = value;
@@ -50,7 +49,6 @@ public class SerialConnector {
 
 	public void sendString(Device device, byte i, byte j) {
 		try {
-			log.info("Sending: " + device.getChar() + i + j);
 			byte[] bytes = new byte[3];
 			bytes[0] = (byte) device.getChar();
 			bytes[1] = i;
@@ -74,7 +72,6 @@ public class SerialConnector {
 			if (sev.getEventValue() > 0) {
 				try {
 					buffer += new String(serialPort.readBytes());
-					// log.info(buffer);
 					if (buffer.contains("\n")) {
 						String[] list = buffer.split("\n");
 						String line;
