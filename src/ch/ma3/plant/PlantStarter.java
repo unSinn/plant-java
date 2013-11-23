@@ -21,6 +21,8 @@ public class PlantStarter {
 	private Relay relay;
 	private DeviceController controller;
 
+	private boolean vegi = true;
+
 	public PlantStarter() {
 
 	}
@@ -57,12 +59,18 @@ public class PlantStarter {
 	}
 
 	private void setupCron(Relay relay) {
-		RelayCronJob.forRelay(relay).pin(Relay.LIGHTPIN).turnOn().at("* 10-21 * * *")
-				.schedule(scheduler);
-		RelayCronJob.forRelay(relay).pin(Relay.LIGHTPIN).turnOff().at("* 22-9 * * *") // 10:00
-																			// -
-																			// 21:59
-				.schedule(scheduler);
+		if (vegi) {
+			RelayCronJob.forRelay(relay).pin(Relay.LIGHTPIN).turnOn()
+					.at("* 7-23 * * *").schedule(scheduler);
+			RelayCronJob.forRelay(relay).pin(Relay.LIGHTPIN).turnOff()
+					.at("* 0-6 * * *").schedule(scheduler);
+		} else {
+
+			RelayCronJob.forRelay(relay).pin(Relay.LIGHTPIN).turnOn()
+					.at("* 10-21 * * *").schedule(scheduler);
+			RelayCronJob.forRelay(relay).pin(Relay.LIGHTPIN).turnOff()
+					.at("* 22-9 * * *").schedule(scheduler);
+		}
 
 		SensorDataWriterCronJob.at("*/5 * * * *").schedule(scheduler);
 
